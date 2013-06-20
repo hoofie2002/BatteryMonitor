@@ -9,26 +9,6 @@
         android:layout_height="wrap_content"
         android:text="@string/hello" />
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/textgoeshere"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/sensorX"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/zerosensor"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-    
-    <TextView
-        android:id="@+id/sensorY"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/zerosensor"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
 	
       <TextView
         android:id="@+id/batteryCharge"
@@ -37,12 +17,14 @@
         android:text="@string/zerosensor"
         android:textAppearance="?android:attr/textAppearanceLarge" />
       
+
       <TextView
-        android:id="@+id/batteryChargeState"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/zerobattery"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-      	
+          android:id="@+id/chargePercent"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/chargePercent"
+          android:textAppearance="?android:attr/textAppearanceLarge"
+          android:textSize="100sp" />
+
     
 </LinearLayout>

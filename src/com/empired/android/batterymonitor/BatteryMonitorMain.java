@@ -1,129 +1,79 @@
 package com.empired.android.batterymonitor;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.os.BatteryManager;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.empired.android.batterymonitor.impl.BatteryStatusImpl;
+import com.empired.android.batterymonitor.impl.BatteryStatusActual;
 
 public class BatteryMonitorMain extends Activity {
-	
+
 	private static Context context;
-	
-	SensorManager mSensorManager;
-	BatteryManager mBatteryManager;
-	SensorTrap st;
-	TextView tvSensorX;
-	TextView tvSensorY;
+
 	TextView batChargeStatus;
 	TextView batChargeState;
-	
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-        
-        BatteryMonitorMain.context = getApplicationContext();
-        
-        // Get an instance of the SensorManager
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+	TextView chargePercent;
 
-        
-        TextView myText = (TextView) findViewById(R.id.textView1);
-        tvSensorX  = (TextView) findViewById(R.id.sensorX);
-        tvSensorY  = (TextView) findViewById(R.id.sensorY);
-        batChargeStatus = (TextView) findViewById(R.id.batteryCharge);
-        batChargeState = (TextView) findViewById(R.id.batteryChargeState);
-        myText.setText("Accelerometer Movements");
-        
-        st = new SensorTrap();
-        st.startReading();
-        
-    }
-    
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+
+		BatteryMonitorMain.context = getApplicationContext();
+
+		batChargeStatus = (TextView) findViewById(R.id.batteryCharge);
+		chargePercent = (TextView) findViewById(R.id.chargePercent);
 
 
-    
-    public static Context getAppContext() {
-        return BatteryMonitorMain.context;
-    }
-    
-    @Override
-    protected void onResume() {
-        super.onResume();
-             // Start the simulation
-        st.startReading();
-    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // Stop the simulation
-        st.stopReading();
-    }
-    
-    
-    class SensorTrap implements SensorEventListener {
-    	Sensor mAccelerometer;
-    	BatteryStatus batStatus = null;
-    	
-    	public SensorTrap() {
-            mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            batStatus = new BatteryStatusImpl(getAppContext());
-    	}
-    	
-        public void startReading() {
-            /*
-             * It is not necessary to get accelerometer events at a very high
-             * rate, by using a slower rate (SENSOR_DELAY_UI), we get an
-             * automatic low-pass filter, which "extracts" the gravity component
-             * of the acceleration. As an added benefit, we use less power and
-             * CPU resources.
-             */
-            mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
-        }
 
-        public void stopReading() {
-            mSensorManager.unregisterListener(this);
-        }
-    	
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            if (event.sensor.getType() != Sensor.TYPE_ACCELEROMETER)
-                return;
-            /*
-             * record the accelerometer data, the event's timestamp as well as
-             * the current time. The latter is needed so we can calculate the
-             * "present" time during rendering. In this application, we need to
-             * take into account how the screen is rotated with respect to the
-             * sensors (which always return data in a coordinate space aligned
-             * to with the screen in its native orientation).
-             */
+	}
 
-            float mSensorX = event.values[0];
-            tvSensorX.setText("xPos: " + String.valueOf(mSensorX));
-            float mSensorY = event.values[1];
-            tvSensorY.setText("yPos: " + String.valueOf(mSensorY));
-            float batCharge = batStatus.getBatteryChargePercentage();
-            batChargeState.setText("Charge :" + String.valueOf(batCharge) + "%");
-            boolean isBatCharging= batStatus.isBatteryCharging();
-            batChargeStatus.setText("Charged  :" + String.valueOf(isBatCharging));
-            
-        }
+	/**
+	 * Once onResume is called, the activity has become visible (it is now
+	 * "resumed"). Comes after onCreate
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
+		IntentFilter filter = new IntentFilter();
 
-		@Override
-		public void onAccuracyChanged(Sensor sensor, int accuracy) {
-			// TODO Auto-generated method stub
-			
+		filter.addAction(Intent.ACTION_BATTERY_CHANGED);
+		registerReceiver(mBroadcastReceiver, filter);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		unregisterReceiver(mBroadcastReceiver);
+	}
+
+	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+
+		public void onReceive(Context context, Intent intent) {
+
+			String action = intent.getAction();
+
+			// store battery information received from BatteryManager
+			if (action.equals(Intent.ACTION_BATTERY_CHANGED)) {
+				BatteryStatus stat = new BatteryStatusActual(intent);
+				batChargeStatus.setText("USB  :"
+						+ String.valueOf(stat.isBatteryOnUSB()));
+				chargePercent.setText(String.valueOf(stat
+						.getBatteryChargePercentage()) + "%");
+				if (stat.getBatteryChargePercentage() > 75) chargePercent.setTextColor(Color.GREEN);
+				if (stat.getBatteryChargePercentage() < 15) chargePercent.setTextColor(Color.RED);
+				if (stat.getBatteryChargePercentage() <= 75 && stat.getBatteryChargePercentage() >=15 ) chargePercent.setTextColor(Color.YELLOW);
+				if (stat.getBatteryChargePercentage() < 15) chargePercent.setTextColor(Color.RED);
+			}
+
 		}
-    }
-    
-}
+	};
 
+}

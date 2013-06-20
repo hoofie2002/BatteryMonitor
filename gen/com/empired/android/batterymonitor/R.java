@@ -15,17 +15,15 @@ public final class R {
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int batteryCharge=0x7f050003;
-        public static final int batteryChargeState=0x7f050004;
-        public static final int sensorX=0x7f050001;
-        public static final int sensorY=0x7f050002;
-        public static final int textView1=0x7f050000;
+        public static final int batteryCharge=0x7f050000;
+        public static final int chargePercent=0x7f050001;
     }
     public static final class layout {
         public static final int main=0x7f030000;
     }
     public static final class string {
         public static final int app_name=0x7f040002;
+        public static final int chargePercent=0x7f040005;
         public static final int hello=0x7f040000;
         public static final int textgoeshere=0x7f040001;
         public static final int zerobattery=0x7f040004;
