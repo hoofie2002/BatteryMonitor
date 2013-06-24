@@ -9,24 +9,28 @@
 
     <ImageView
         android:id="@+id/batteryImage"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:layout_width="200dp"
-        android:layout_height="195dp"
+        android:layout_height="200dp"
         android:contentDescription="@string/batteryIconDescription"
         android:src="@drawable/empty" />
 
-    <TextView
+        <TextView
         android:id="@+id/chargePercent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/chargePercent"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="100sp" />
-
+    
+    
     <TextView
         android:id="@+id/txtChargingStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/chargeStatus"
+        android:textSize="20sp"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </LinearLayout>
