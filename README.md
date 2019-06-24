@@ -1,4 +1,0 @@
-BatteryMonitor
-==============
-
-AndroidBatteryMonitor
